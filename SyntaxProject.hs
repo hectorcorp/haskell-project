@@ -1,90 +1,90 @@
-{- HLINT ignore "Use newtype instead of data" -}
 module SyntaxProject where
 
 {-
 Possible Strings
 
-a = True OR False
+A = True or False
+B = True or (True and !(False))
+print A
+C = A or B
+print C
 
-b = True OR (True AND !(False))
+Same freedom as cpp !
+print (!!!False)
 
-print a
+Same freedom as cpp ()
+print !(((False)))
 
-c = a OR b
 
-print c
 
-print (!False)
+Not possible strings
 
-print !(False)
- 
+Need to force parathesis with multiple operations
+a = True OR False AND True
 -}
 
 
 
-{-
+{-  Syntax Free Grammer
+
+
 <program> -> <stmts>
 
 <stmts> -> <stmt><stmts> | epsilon
 
 <stmt> -> <var> = <oper> | print <oper> 
 
-<oper> -> <expr> AND <expr> 
-        | <expr> OR <expr> 
-        | <expr> XNOR <expr> 
-        | <expr> NAND <expr> 
-        | <expr> NOR <expr> 
+<oper> -> <expr> and <expr> 
+        | <expr> or <expr> 
+        | <expr> nand <expr> 
+        | <expr> nor <expr> 
+        | <expr> xor <expr>
+        | <expr> xnor <expr>
         | <expr>
 
 <expr> -> (<oper>) | !<expr> | <bool> | <var>
 
 <bool> -> True | False
 
-<var> -> A | B | C | D | E | F 
+<var> -> A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
 
-<env> -> [(<var>, <oper>)]
+<env> -> [(<var>, <bool>)]
 -}
 
 type Program = [Stmt]
 
-data Stmt = AssignF Var Oper | Print Oper
+data Stmt = Assign Var Oper | Print Oper
 
 instance Show Stmt where 
-    show :: Stmt -> String
-    show (AssignF v o) = show v ++ " = " ++ show o
+    show (Assign v o) = show v ++ " = " ++ show o
     show (Print o) = "print " ++ show o
 
-data Oper = And Expr Expr | Or Expr Expr | Xnor Expr Expr | Nand Expr Expr | Nor Expr Expr | Ex Expr
+data Oper =   And Expr Expr 
+            | Or Expr Expr 
+            | Nand Expr Expr 
+            | Nor Expr Expr 
+            | Xor Expr Expr 
+            | Xnor Expr Expr
+            | Ex Expr
 
 instance Show Oper where
-    show (And e1 e2) = show e1 ++ " AND " ++ show e2
-    show (Or e1 e2 ) = show e1 ++ " OR " ++ show e2
-    show (Xnor e1 e2 ) = show e1 ++ " XNOR " ++ show e2
-    show (Nand e1 e2 ) = show e1 ++ " NAND " ++ show e2
-    show (Nor e1 e2 ) = show e1 ++ " NOR " ++ show e2
+    show (And e1 e2) = show e1 ++ " and " ++ show e2
+    show (Or e1 e2 ) = show e1 ++ " or " ++ show e2
+    show (Nand e1 e2 ) = show e1 ++ " nand " ++ show e2
+    show (Nor e1 e2 ) = show e1 ++ " nor " ++ show e2
+    show (Xor e1 e2 ) = show e1 ++ " xor " ++ show e2
+    show (Xnor e1 e2 ) = show e1 ++ " xnor " ++ show e2
     show (Ex e1) = show e1
 
-data Expr = Paren Oper | Not Expr | Bool BoolValue | Variable Var
+data Expr = Paren Oper | Not Expr | BoolValue Bool | Variable Var
 
 instance Show Expr where
     show (Paren o) = "(" ++ show o ++ ")"
     show (Not e) = "!" ++ show e
-    show (Bool v) = show v
+    show (BoolValue b) = show b
     show (Variable v) = show v
 
-data Var = A | B | C | D | E | F
+data Var = A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
+    deriving Show
 
-instance Show Var where
-    show A = "A"
-    show B = "B"
-    show C = "C"
-    show D = "D"
-    show E = "E"
-    show F = "F"
-
-data BoolValue = Val Bool
-
-instance Show BoolValue where
-    show (Val b) = show b
-
-type Env = [(Var, Expr)]
+type Env = [(Var, Bool)]

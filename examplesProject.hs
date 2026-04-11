@@ -3,34 +3,36 @@ import SyntaxProject
 {-
 To run in terminal:
 ghci examplesProject.hs
+:load examplesProject.hs
+s1    s2    s3
+main
+-}
+
+
+{- 
+p1:
+A = False
+print A
+C = True or (True nand !False)
 -}
 
 -- A = False
 s1 :: Stmt
-s1 = AssignF A (Ex (Bool (Val False)))
+s1 = Assign A (Ex (BoolValue False))
 
--- B = True OR A
+-- print A
 s2 :: Stmt
-s2 = AssignF B (Or (Bool (Val True)) (Variable A))
+s2 = Print (Ex (Variable A))
 
--- print B
+-- C = True or (True nand !False)
 s3 :: Stmt
-s3 = Print (Ex (Variable B))
+s3 = Assign C(Or (BoolValue True)(Paren (Nand (BoolValue True) (Not (BoolValue False)))))
 
--- C = True OR (True NAND !False)
-s4 :: Stmt
-s4 = AssignF C(Or (Bool (Val True))(Paren (Nand (Bool (Val True)) (Not (Bool (Val False))))))
 
--- print C
-s5 :: Stmt
-s5 = Print (Ex (Variable C))
 
-{-
-A = False
-B = True OR A
-C = True OR (True NAND !False)
-print C
--}
+
 p1 :: Program
-p1 = [s1, s2, s3, s4, s5]
+p1 = [s1, s2, s3]
 
+main :: IO ()
+main = print p1
