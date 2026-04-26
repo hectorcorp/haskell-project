@@ -32,11 +32,14 @@ s2 = Print (Ex (Variable A))
 s3 :: Stmt
 s3 = Assign C(Or (BoolValue True)(Paren (Nand (BoolValue True) (Not (BoolValue False)))))
 
+s4 :: Stmt
+s4 = InputAssign D
 
-
+s5 :: Stmt
+s5 = Print (Ex (Variable D))
 
 p1 :: Program
-p1 = [s1, s2, s3]
+p1 = [s1, s2, s3, s4, s5]
 
 printP :: Program -> IO ()
 printP = putStrLn . printProgram

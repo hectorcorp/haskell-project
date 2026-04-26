@@ -12,72 +12,47 @@ evaluateProg (s : ss) env = do
 
                     
 evaluateStmt :: Stmt -> Env -> IO Env
-evaluateStmt (Assign v o) env = do
-                                 value <- evaluateOper o env
-                                 pure (updateEnv v value env)
+evaluateStmt (Assign v o) env = pure (updateEnv v (evaluateOper o env) env)
+
+evaluateStmt (InputAssign v) env = do
+                                putStr "Enter value (t/f): "
+                                inputval <- getLine
+                                case inputval of
+                                    "t" -> pure (updateEnv v True env)
+                                    "f" -> pure (updateEnv v False env)
+                                    _ -> evaluateStmt (InputAssign v) env
 
 evaluateStmt (Print o) env = do
-                                value <- evaluateOper o env
-                                print value
+                                print (evaluateOper o env)
                                 pure env
 
 
-evaluateOper :: Oper -> Env -> IO Bool
-evaluateOper (And e1 e2) env = do
-                                value1 <- evaluateExpr e1 env
-                                value2 <- evaluateExpr e2 env
-                                pure (value1 && value2)
+evaluateOper :: Oper -> Env -> Bool
+evaluateOper (And e1 e2) env = evaluateExpr e1 env && evaluateExpr e2 env
 
-evaluateOper (Or e1 e2) env = do
-                                value1 <- evaluateExpr e1 env
-                                value2 <- evaluateExpr e2 env
-                                pure (value1 || value2)
+evaluateOper (Or e1 e2) env = evaluateExpr e1 env || evaluateExpr e2 env
 
-evaluateOper (Nand e1 e2) env = do
-                                value1 <- evaluateExpr e1 env
-                                value2 <- evaluateExpr e2 env
-                                pure (not (value1 && value2))
+evaluateOper (Nand e1 e2) env = not (evaluateExpr e1 env && evaluateExpr e2 env)
 
-evaluateOper (Nor e1 e2) env = do
-                                value1 <- evaluateExpr e1 env
-                                value2 <- evaluateExpr e2 env
-                                pure (not (value1 || value2))
+evaluateOper (Nor e1 e2) env = not (evaluateExpr e1 env || evaluateExpr e2 env)
 
-evaluateOper (Xor e1 e2) env = do
-                                value1 <- evaluateExpr e1 env
-                                value2 <- evaluateExpr e2 env
-                                pure (value1 /= value2)
+evaluateOper (Xor e1 e2) env = evaluateExpr e1 env /= evaluateExpr e2 env
                             
-evaluateOper (Xnor e1 e2) env = do
-                                value1 <- evaluateExpr e1 env
-                                value2 <- evaluateExpr e2 env
-                                pure (value1 == value2)
+evaluateOper (Xnor e1 e2) env = evaluateExpr e1 env == evaluateExpr e2 env
 
 evaluateOper (Ex e) env = evaluateExpr e env
 
-evaluateExpr :: Expr -> Env -> IO Bool
+evaluateExpr :: Expr -> Env -> Bool
 evaluateExpr (Paren o) env = evaluateOper o env
-evaluateExpr (Not e) env = do
-                            value <- evaluateExpr e env
-                            pure (not value)
 
-evaluateExpr (BoolValue b) _ = pure b
+evaluateExpr (Not e) env = not (evaluateExpr e env)
+
+evaluateExpr (BoolValue b) _ = b
 
 evaluateExpr (Variable v) env =
     case lookup v env of
-        Just value -> pure value
-        --handle like print A, if A has no value
+        Just value -> value
         Nothing -> error (show v ++ " has no value")
-
-evaluateExpr Input env = do
-                          putStr "Enter value (t/f): "
-                          inputval <- getLine
-                          case inputval of
-                            "t" -> pure True
-                            "f" -> pure False
-                            _ -> do
-                                  evaluateExpr Input env
-
 
 updateEnv :: Var -> Bool -> Env -> Env
 updateEnv v value [] = [(v, value)]
