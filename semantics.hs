@@ -10,7 +10,8 @@ evaluateProg (s : ss) env = do
                              env' <- evaluateStmt s env
                              evaluateProg ss env'
 
-                    
+
+
 evaluateStmt :: Stmt -> Env -> IO Env
 evaluateStmt (Assign v o) env = pure (updateEnv v (evaluateOper o env) env)
 
@@ -25,6 +26,8 @@ evaluateStmt (InputAssign v) env = do
 evaluateStmt (Print o) env = do
                                 print (evaluateOper o env)
                                 pure env
+
+
 
 
 evaluateOper :: Oper -> Env -> Bool
@@ -42,6 +45,9 @@ evaluateOper (Xnor e1 e2) env = evaluateExpr e1 env == evaluateExpr e2 env
 
 evaluateOper (Ex e) env = evaluateExpr e env
 
+
+
+
 evaluateExpr :: Expr -> Env -> Bool
 evaluateExpr (Paren o) env = evaluateOper o env
 
@@ -53,6 +59,9 @@ evaluateExpr (Variable v) env =
     case lookup v env of
         Just value -> value
         Nothing -> error (show v ++ " has no value")
+
+
+
 
 updateEnv :: Var -> Bool -> Env -> Env
 updateEnv v value [] = [(v, value)]

@@ -46,5 +46,8 @@ printP = putStrLn . printProgram
 
 main :: IO ()
 main = do
+        printP p1
+        putStrLn "------"
         finalEnv <- evaluate p1
-        pure ()
+        print finalEnv
+        --pure ()
