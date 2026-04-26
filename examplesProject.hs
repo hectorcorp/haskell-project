@@ -1,4 +1,5 @@
 import SyntaxProject
+import Semantics
 
 {-
 To run in terminal:
@@ -6,6 +7,9 @@ ghci examplesProject.hs
 :load examplesProject.hs
 s1    s2    s3
 main
+mapM_
+pure ()                           to print just output of program
+print finalEnv                    to print the final env as well
 -}
 
 
@@ -34,5 +38,10 @@ s3 = Assign C(Or (BoolValue True)(Paren (Nand (BoolValue True) (Not (BoolValue F
 p1 :: Program
 p1 = [s1, s2, s3]
 
+printP :: Program -> IO ()
+printP = putStrLn . printProgram
+
 main :: IO ()
-main = print p1
+main = do
+        finalEnv <- evaluate p1
+        pure ()

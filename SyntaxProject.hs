@@ -53,6 +53,11 @@ a = True OR False AND True
 
 type Program = [Stmt]
 
+printProgram :: Program -> String
+printProgram [] = ""
+printProgram [s] = show s ++ "\n"
+printProgram (s:ss) = show s ++ "\n" ++ printProgram ss
+
 data Stmt = Assign Var Oper | Print Oper
 
 instance Show Stmt where 
@@ -76,15 +81,18 @@ instance Show Oper where
     show (Xnor e1 e2 ) = show e1 ++ " xnor " ++ show e2
     show (Ex e1) = show e1
 
-data Expr = Paren Oper | Not Expr | BoolValue Bool | Variable Var
+data Expr = Paren Oper | Not Expr | BoolValue Bool | Variable Var | Input
 
 instance Show Expr where
     show (Paren o) = "(" ++ show o ++ ")"
     show (Not e) = "!" ++ show e
     show (BoolValue b) = show b
     show (Variable v) = show v
+    show Input = "input()"
 
 data Var = A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
-    deriving Show
+    deriving (Show, Eq)
 
 type Env = [(Var, Bool)]
+
+--Need to add: add an input option to input true or false to a variable
